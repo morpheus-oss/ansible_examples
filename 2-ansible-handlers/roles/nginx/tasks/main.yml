@@ -1,0 +1,14 @@
+---
+- name: Update apt cache and install Nginx
+  ansible.builtin.apt:
+    name: nginx
+    state: fixed
+    update_cache: true
+
+- name: Copy index.html
+  ansible.builtin.template:
+    src: index.html
+    dest: /usr/share/nginx/html/index.html
+    mode: preserve
+  notify:
+    - Restart Nginx

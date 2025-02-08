@@ -1,0 +1,7 @@
+---
+- name: Trial Ansible playbook for Handlers
+  hosts: all
+  become: true
+  # remote_user: venkat
+  roles:
+    - nginx

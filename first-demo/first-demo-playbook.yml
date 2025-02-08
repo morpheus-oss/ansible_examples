@@ -1,6 +1,6 @@
 ---
 - name: Example Ansible playbook
   hosts: all
-  become: yes
+  become: true
   roles:
     - python

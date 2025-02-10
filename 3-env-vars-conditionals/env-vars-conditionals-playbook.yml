@@ -1,0 +1,119 @@
+---
+- name: Playbook to playaround variables, environment variables and conditionals
+  hosts: all
+  become: false
+#  roles:
+#    - user-role
+
+  environment:
+    ENV_VAR: "Environment variables allow String type only"
+
+  vars:
+    # boolean
+    enabled: true
+
+    # String
+    greet: "Hello!"
+
+    # List
+    fruits:
+      - apple
+      - orange
+      - pineapple
+      - banana
+
+    # Dictionary
+    fruit_prices:
+      apple: 120
+      orange: 80
+      pineapple: 80
+      banana: 70
+
+    # Referencing Nested variables
+    fruit_basket:
+      - name: John Doe
+        fruits:
+          - apple
+          - pineapple
+          - orange
+      - name: Jane Doe
+        fruits:
+          - apple
+          - orange
+          - banana
+
+  vars_files:
+    - custom-vars.yml
+
+  tasks:
+    - name: Print string variable
+      ansible.builtin.debug:
+        var: greet
+
+    - name: Print boolean variable
+      ansible.builtin.debug:
+        msg: "Variable is true"
+      when: enabled
+
+    - name: Print list variable
+      ansible.builtin.debug:
+        var: fruits
+
+    - name: Access list element
+      ansible.builtin.debug:
+        var: fruits[1]
+
+    - name: Print Dictionary variable
+      ansible.builtin.debug:
+        var: fruit_prices
+
+    - name: Access Dictionary variable
+      ansible.builtin.debug:
+        var: fruit_prices.apple
+
+    - name: Dynamically set value for variable
+      ansible.builtin.command:
+        echo "{{ fruit_prices['apple'] }}"
+      register: apple_price
+      changed_when: apple_price.rc != 0
+
+    - name: Print dynamic variable value
+      ansible.builtin.debug:
+        var: apple_price.stdout
+
+    - name: Get the value of apple from nested variable
+      ansible.builtin.debug:
+        var: fruit_prices[fruit_basket[0].fruits[0]]
+
+    - name: Get value from linked var vars_files
+      ansible.builtin.debug:
+        var: custom-var
+
+    - name: Using Jinja2 filter on variables
+      ansible.builtin.debug:
+        var: fruit_prices.keys() | list | map('upper') | list
+##
+#    - name: Playbook-level environment variable
+#      ansible.builtin.command:
+#        "echo $ENV_VAR"
+#      register: env-var
+#      changed_when: env-var.rc != 0
+#
+#    - name: Task-level environment var
+#      environment:
+#        TASK_ENV_VAR: "Task level variable"
+#      ansible.builtin.command:
+#        "echo $TASK_ENV_VAR"
+#      register: task-env-var
+#      changed_when: task-env-var.rc != 0
+#
+#    - name: Test environment variables
+#      ansible.builtin.command:
+#        "echo $ENV_VAR $TASK_ENV_VAR"
+#      register: test-out
+#      changed_when: test-out.rc != 0
+
+    # Defining and accessing the variable at RunTime
+    - name: Print the value of variable when var file is passed at runtime
+      ansible.builtin.debug:
+        var: new-var

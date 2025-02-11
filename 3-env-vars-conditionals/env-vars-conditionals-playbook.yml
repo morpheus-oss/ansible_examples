@@ -1,16 +1,17 @@
 ---
 - name: Playbook to playaround variables, environment variables and conditionals
   hosts: all
-  become: false
-#  roles:
-#    - user-role
+  become: true
+  roles:
+    - conditional
+    - install-nginx
 
   environment:
     ENV_VAR: "Environment variables allow String type only"
 
   vars:
     # boolean
-    enabled: true
+    install_apache: true
 
     # String
     greet: "Hello!"
@@ -53,7 +54,7 @@
     - name: Print boolean variable
       ansible.builtin.debug:
         msg: "Variable is true"
-      when: enabled
+      when: install_apache
 
     - name: Print list variable
       ansible.builtin.debug:
@@ -85,13 +86,18 @@
       ansible.builtin.debug:
         var: fruit_prices[fruit_basket[0].fruits[0]]
 
+    - name: Using Jinja2 filter on variables
+      ansible.builtin.debug:
+        var: fruit_prices.keys() | list | map('upper') | list
+
     - name: Get value from linked var vars_files
       ansible.builtin.debug:
         var: custom-var
 
-    - name: Using Jinja2 filter on variables
+    # Defining and accessing the variable at RunTime
+    - name: Print the value of variable when var file is passed at runtime
       ansible.builtin.debug:
-        var: fruit_prices.keys() | list | map('upper') | list
+        var: new-var
 ##
 #    - name: Playbook-level environment variable
 #      ansible.builtin.command:
@@ -112,8 +118,3 @@
 #        "echo $ENV_VAR $TASK_ENV_VAR"
 #      register: test-out
 #      changed_when: test-out.rc != 0
-
-    # Defining and accessing the variable at RunTime
-    - name: Print the value of variable when var file is passed at runtime
-      ansible.builtin.debug:
-        var: new-var

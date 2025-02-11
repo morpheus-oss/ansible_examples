@@ -1,0 +1,67 @@
+---
+## Boolean Conditional check for installing Apache
+- name: Install Apache web server
+  ansible.builtin.apt:
+    name: apache2
+    state: absent
+  when: install_apache
+
+## Putting multiple condition using ansible_facts
+- name: Combine conditions using ansible facts
+  ansible.builtin.debug:
+    var: ansible_facts['kernel_version']
+  when:
+    - ansible_facts['os_family'] == "Debian"
+    - ansible_facts['distribution_major_version'] == "20"
+
+## Setting complex condition
+- name: Setting complex condition
+  ansible.builtin.debug:
+    var: ansible_facts['kernel_version']
+  when:
+    ansible_facts['os_family'] == "Debian" and ansible_facts['distribution_major_version'] | int >= 20
+
+## Conditionals based on ansible_facts
+- name: How to use ansible_facts
+  ansible.builtin.debug:
+    var: ansible_facts['distribution']
+  when: ansible_facts['os_family'] == "Debian"
+
+## When with Loop
+- name: Run with items greater than 5
+  ansible.builtin.command: echo {{ item }}
+  loop: [0, 2, 4, 6, 8, 10]
+  when: item > 5
+  register: output
+  changed_when: output.rc != 0
+
+- name: Create test file if it does not exist
+  ansible.builtin.copy:
+    dest: "~/test-file.txt"
+    content: "This is a test file."
+    mode: preserve
+  when: not lookup('file', '~/test-file.txt', errors='ignore')
+
+- name: Check if test-file.txt exists
+  ansible.builtin.stat:
+    path: "~/test-file.txt"
+  register: test_file_stat
+
+## Register a variables and evaluate the value using when condition
+- name: Register a variable
+  ansible.builtin.command:
+    cat ~/test-file.txt
+  when: test_file_stat.stat.exists
+  register: test_file_content
+  changed_when: false
+
+- name: If file exists, print its content
+  ansible.builtin.debug:
+    msg: "File content: {{ test_file_content.stdout }}"
+  when:
+    test_file_stat.stat.exists
+
+- name: If file doesn't exists
+  ansible.builtin.debug:
+    msg: "The file (~/test-file.txt) doesn't exist."
+  when: not test_file_stat.stat.exists

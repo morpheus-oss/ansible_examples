@@ -1,0 +1,8 @@
+---
+- name: Setup Developer environment locally
+  hosts: all
+  become: true
+  roles:
+    - system-tools
+    - container-setup
+    - user-tools

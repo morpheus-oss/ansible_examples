@@ -1,0 +1,28 @@
+---
+- name: Install Developer tools
+  ansible.builtin.apt:
+    name:
+      - git
+      - gh
+      - httpie
+      - neovim
+      - tmux
+    state: present
+    update_cache: true
+
+- name: Add Github official GPG key
+  ansible.builtin.apt_key:
+    url: https://apt.packages.shiftkey.dev/gpg.key
+    state: present
+
+- name: Add Github APT repository
+  ansible.builtin.apt_repository:
+    repo: deb [arch=amd64] https://apt.packages.shiftkey.dev/ubuntu focal stable
+    state: present
+
+- name: Install Github Desktop
+  ansible.builtin.apt:
+    name:
+      - github-desktop
+    state: present
+    update_cache: true

@@ -1,0 +1,9 @@
+---
+- name: Install System tools
+  ansible.builtin.apt:
+    name:
+      - net-tools
+      - traceroute
+      - htop
+    state: present
+    update_cache: true

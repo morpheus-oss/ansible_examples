@@ -1,8 +1,9 @@
 ---
-- name: Setup Developer environment locally
-  hosts: all
+- name: Setup Developer environment locally (For ubuntu)
+  hosts: ubuntu
   become: true
   roles:
     - system-tools
     - container-setup
+    - dev-tools
     - user-tools

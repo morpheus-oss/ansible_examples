@@ -10,6 +10,17 @@
     state: present
     update_cache: true
 
+- name: Install JDKs
+  ansible.builtin.apt:
+    name:
+      - openjdk-8-jdk
+      - openjdk-11-jdk
+      - openjdk-17-jdk
+      - openjdk-21-jdk
+    state: present
+    update-cache: false
+    force: true
+
 - name: Add Github official GPG key
   ansible.builtin.apt_key:
     url: https://apt.packages.shiftkey.dev/gpg.key

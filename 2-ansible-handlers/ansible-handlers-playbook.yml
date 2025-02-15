@@ -1,6 +1,6 @@
 ---
 - name: Trial Ansible playbook for Handlers
-  hosts: all
+  hosts: ubuntu
   become: true
   # remote_user: venkat
   roles:

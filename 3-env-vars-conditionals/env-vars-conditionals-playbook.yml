@@ -1,6 +1,6 @@
 ---
 - name: Playbook to playaround variables, environment variables and conditionals
-  hosts: all
+  hosts: ubuntu
   become: true
   roles:
     - conditional
@@ -88,33 +88,33 @@
 
     - name: Using Jinja2 filter on variables
       ansible.builtin.debug:
-        var: fruit_prices.keys() | list | map('upper') | list
+        var: fruit_prices.keys() | list | map('upper')
 
     - name: Get value from linked var vars_files
       ansible.builtin.debug:
-        var: custom-var
+        var: custom_var
 
     # Defining and accessing the variable at RunTime
     - name: Print the value of variable when var file is passed at runtime
       ansible.builtin.debug:
-        var: new-var
-##
-#    - name: Playbook-level environment variable
-#      ansible.builtin.command:
-#        "echo $ENV_VAR"
-#      register: env-var
-#      changed_when: env-var.rc != 0
-#
-#    - name: Task-level environment var
-#      environment:
-#        TASK_ENV_VAR: "Task level variable"
-#      ansible.builtin.command:
-#        "echo $TASK_ENV_VAR"
-#      register: task-env-var
-#      changed_when: task-env-var.rc != 0
-#
-#    - name: Test environment variables
-#      ansible.builtin.command:
-#        "echo $ENV_VAR $TASK_ENV_VAR"
-#      register: test-out
-#      changed_when: test-out.rc != 0
+        var: new_var
+
+    - name: Playbook-level environment variable
+      ansible.builtin.command:
+        "echo $ENV_VAR"
+      register: env_var
+      changed_when: env_var.rc != 0
+
+    - name: Task-level environment var
+      environment:
+        TASK_ENV_VAR: "Task level variable"
+      ansible.builtin.command:
+        "echo $TASK_ENV_VAR"
+      register: task_env_var
+      changed_when: task_env_var.rc != 0
+
+    - name: Test environment variables
+      ansible.builtin.command:
+        "echo $ENV_VAR $TASK_ENV_VAR"
+      register: test_out
+      changed_when: test_out.rc != 0

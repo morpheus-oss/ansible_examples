@@ -1,4 +1,11 @@
 ---
+- name: Remove previous version of Docker, if any
+  ansible.builtin.command:
+    cmd: for pkg in docker.io docker-doc docker-compose docker-compose-v2 podman-docker containerd runc; do sudo apt-get remove $pkg; done
+  register: remove_docker
+  changed_when: remove_docker.rc != 0
+  ignore_errors: true
+
 - name: Update apt package index
   ansible.builtin.apt:
     update_cache: true
@@ -28,7 +35,12 @@
 
 - name: Install Docker CE
   ansible.builtin.apt:
-    name: docker-ce
+    name:
+      - docker-ce
+      - docker-ce-cli
+      - containerd.io
+      - docker-buildx-plugin
+      - docker-compose-plugin
     state: present
   notify: Restart Docker
 
